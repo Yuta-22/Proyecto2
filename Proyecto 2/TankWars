@@ -1,0 +1,67 @@
+import java.util.Scanner;
+public class TankWars {
+    public static void main(String[] args) {
+        Scanner entrada = new Scanner(System.in);
+        String salida = "\n1 para Disparar una (1) bala\n"+
+                        "2 para  Activar bomba atomica\n"+
+                        "3 para  Activar Tanque Mutante\n"+
+                        "4 para  La frase inspiradora Abuela\n" +
+                        "5 para  Conteo de disparos\n" + 
+                        "6 para  Mostrar cantidad de sangre\n"+
+                        "7 para  Guardar datos de sangre en el archivo\n"+
+                        "8 para  Mostrar el Tablero\n"+
+                        "9 para  Mostrar el menu\n";
+
+        Tanque.moreTanks();
+        System.out.println(Tanque.gameBoard());
+        System.out.println("\nDigita\n");
+        System.out.println(salida);
+        int opcion = entrada.nextInt();
+        int numeroPius = 0;
+        while(true){
+            
+            if(opcion == 1){
+                System.out.println("\nDigita la fila de la posición del tanque (0,1)\n");
+                int fila = entrada.nextInt();
+                System.out.println("\nDigita la columna de la posición del tanque(0,1)\n");
+                int columna = entrada.nextInt();
+                Tanque.piuPiu(fila,columna);
+                numeroPius++;
+
+            }else if(opcion == 2){
+                Tanque.hiroshima();
+                System.out.println("\nBomba atomica Disparada\n");
+
+            }else if(opcion == 3){
+                Tanque.tanqueMutante();
+                System.out.println("Tanque mutante activado");
+
+            }else if(opcion == 4){
+                System.out.println(Tanque.grandmaAdvice());
+
+            }else if(opcion == 5){
+                System.out.println("La cantidad de disparos que se han hecho son: " + numeroPius);
+
+            }else if(opcion == 6){
+                System.out.println("La cantidad de sangre de los tanques es: \n");
+                System.out.println(Tanque.readBlood());
+            }else if(opcion == 7){
+                System.out.println("Guardando datos de sangre en txt");
+                Tanque.saveBlood();
+            }else if(opcion == 8){
+                System.out.println(Tanque.gameBoard());
+            }else if(opcion == 9){
+                System.out.println(salida);
+            }
+
+
+            if(Tanque.dead()==Tanque.tanksList()){System.out.println("\nGAME OVER\n"); break;}
+
+            System.out.println("\nDigita\n");
+            opcion = entrada.nextInt();
+
+        }
+
+        entrada.close();
+    }
+}

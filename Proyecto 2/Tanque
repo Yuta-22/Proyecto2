@@ -1,0 +1,214 @@
+import java.io.FileWriter;
+import java.io.PrintWriter;
+
+public class Tanque{
+    public static Tanque tanques[][] = new Tanque[2][2];
+
+    private int salud;
+    private String nombre;
+
+    public Tanque(int salud, String nombre){
+        this.salud=salud;
+        this.nombre=nombre;
+    }
+
+    public int getSalud() {
+        return this.salud;
+    }
+
+    public String getNombre() {
+        return this.nombre;
+    }
+
+    public void setSalud(int salud) {
+        this.salud = salud;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
+    public static void addTank(Tanque tanque){
+        boolean validacion = false;
+        for(int x=0;x<2;x++){
+            if(validacion){
+                break;
+            }else{
+                for(int y=0;y<2;y++){
+                    if(tanques[x][y]==null){
+                        tanques[x][y] = tanque;
+                        validacion=true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public static void moreTanks(){
+        int cantidadCreados = (int) (Math.random()*4+1);
+        int tipoCreado;
+        for(int i=1;i<=cantidadCreados;i++){
+            tipoCreado = (int) (Math.random()*2+1);
+            if(tipoCreado==1){
+                addTank(new TanqueNormal());
+            }else if(tipoCreado==2){
+                addTank(new TanqueAlien());
+            }
+        }
+    }
+
+    public static int tanksList(){
+        int numEntrega = 0;
+        for(int x=0;x<2;x++){
+            for(int y=0;y<2;y++){
+                if(!(tanques[x][y]==null)){
+                    numEntrega ++;
+                }
+            }
+        }
+        return numEntrega;
+    }
+
+     public String tankName(){
+        return this.nombre + "-" + this.salud;
+    }
+
+    public static String gameBoard(){
+        int numeroTanque = tanksList();
+        String tablero = "";
+        if(numeroTanque==1){
+            tablero = "-------------\n"+
+                    "|" + tanques[0][0].tankName() +"|" +"     "+ "|\n"+
+                    "-------------\n"+
+                    "|" +"     "+"|" +"     "+ "|";
+        }else if(numeroTanque==2){
+            tablero = "-------------\n"+
+                    "|" + tanques[0][0].tankName() +"|" + tanques[0][1].tankName()+ "|\n"+
+                    "-------------\n"+
+                    "|" +"     "+"|" +"     "+ "|";
+        }else if(numeroTanque ==3){
+            tablero = "-------------\n"+
+                    "|" + tanques[0][0].tankName() +"|" + tanques[0][1].tankName()+ "|\n"+
+                    "-------------\n"+
+                    "|" +tanques[1][0].tankName() +"|" +"     "+ "|";
+        }else{
+            tablero = "-------------\n"+
+                    "|" + tanques[0][0].tankName() +"|" + tanques[0][1].tankName()+ "|\n"+
+                    "-------------\n"+
+                    "|" +tanques[1][0].tankName() +"|" +tanques[1][1].tankName()+ "|";
+        }
+        return tablero;
+    }  
+    
+    public static void hiroshima(){
+        int posx;
+        int posy;
+        while(true){
+            posx = (int) (Math.random()*2);
+            posy = (int) (Math.random()*2);
+            if(tanques[posx][posy]==null){
+                continue;
+            }else if(tanques[posx][posy].getSalud()>0){
+                tanques[posx][posy].setSalud(0);
+                break;
+            }
+        }
+    }
+
+    public static void piuPiu(int posx, int posy){
+        if(posx >=2 || posy >=2){
+            System.out.println("\nLa posicion digitada no existe\n");
+        }else if(tanques[posx][posy]==null){
+            System.out.println("No existe un tanque en esta posicion");
+        }else if(tanques[posx][posy].getSalud()>0){
+            tanques[posx][posy].setSalud(tanques[posx][posy].getSalud()-5); // Aqui se ejecuta el ataque
+        }else if(tanques[posx][posy].getSalud()<=0){
+            System.out.println("El tanque ya esta muertico");
+        }
+    }
+
+    public static void tanqueMutante(){
+        int menor[] = new int[tanksList()];
+        int num = 0;
+       
+        for(int x=0;x<2;x++){
+            for(int y=0;y<2;y++){
+                if(!(tanques[x][y]==null) && tanques[x][y].getSalud()>0){
+                    menor[num]= tanques[x][y].getSalud();
+                    num++;
+                }
+            }
+        }
+
+        int menor2 = menor[0];
+        for(int i=1;i < num;i++){
+            if(menor[i]<menor2){
+                menor2 = menor[i];
+            }
+        }
+
+        boolean validacion = false;
+        for(int x=0;x<2;x++){
+            if(validacion){
+                break;
+            }
+            for(int y=0;y<2;y++){
+                if(!(tanques[x][y]==null) && tanques[x][y].getSalud()==menor2){
+                    tanques[x][y].setSalud(tanques[x][y].getSalud()*2);
+                    validacion = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    public static void saveBlood(){
+        try {
+            PrintWriter archivo = new PrintWriter(new FileWriter("sangre.txt"));
+            
+            for(int x = 0;x<2;x++){
+                for(int y = 0;y<2;y++){
+                    if(!(tanques[x][y]==null)){
+                        archivo.println(tanques[x][y].getNombre() + " " + tanques[x][y].getSalud());
+                    }
+                }
+            }
+            archivo.close();
+        } catch (Exception e) {
+            System.out.println("Oh oh, errorcito al guardar en el archivo" + e);
+        }
+    }
+
+    public static String readBlood(){
+        String salida = "";
+        for(int x = 0;x<2;x++){
+            for(int y = 0;y<2;y++){
+                if(!(tanques[x][y]==null)){
+                   salida += tanques[x][y].getNombre() + " " + tanques[x][y].getSalud() ;
+                }
+            }
+        }
+
+        return salida;
+    }
+
+    public static int dead(){
+        int muertitos = 0;
+        for(int x = 0;x<2;x++){
+            for(int y = 0;y<2;y++){
+                if(!(Tanque.tanques[x][y]==null) && Tanque.tanques[x][y].getSalud()<=0){
+                    muertitos++;
+                }
+            }
+        }
+
+        return muertitos;
+    }
+    
+    public static String grandmaAdvice(){
+        return "Si va a quemar neuronas, mejor que sea en algo productivo, oyó?";
+    }
+
+
+}
